@@ -54,9 +54,41 @@ export const UPDATE_GOAL = gql`
   }
 `;
 
+export const DELETE_GOAL = gql`
+  mutation deleteGoal(
+    $id: ID!
+  ) {
+    deleteGoal(
+      id: $id
+    ) {
+      id
+      goal_type
+      target_weight
+      progress
+      deadline
+      status
+      user
+    }
+  }
+`;
+
 export const GET_GOALS = gql`
     query get_goals{
         goals{
+            id
+            goal_type
+            target_weight
+            progress
+            deadline
+            user
+            status
+        }
+    }
+`
+
+export const GET_GOAL = gql`
+    query get_goal($id:ID){
+        goals(id:ID){
             id
             goal_type
             target_weight
