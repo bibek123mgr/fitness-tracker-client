@@ -1,11 +1,12 @@
 // pages/Goals.jsx
 import React, { useState } from 'react';
-import { CREATE_GOAL, GET_GOALS } from '../queries/goalQueries';
+import { CREATE_GOAL, DELETE_GOAL, GET_GOALS } from '../queries/goalQueries';
 import { useMutation, useQuery } from '@apollo/client';
 import { useEffect } from 'react';
 
 const Goals = () => {
     const [createGoal, { data, loading, error }] = useMutation(CREATE_GOAL);
+    const [deleteGoal] = useMutation(DELETE_GOAL);
     const [goals, setGoals] = useState([]);
 
     const [showModal, setShowModal] = useState(false);
@@ -40,8 +41,12 @@ const Goals = () => {
                 goal_type: formData.goal_type,
                 target_weight: parseFloat(formData.target_weight),
                 progress: parseFloat(formData.progress || 0),
-                deadline: formData.deadline,
-                user: '6a004830fd9fa2d6dace70eb'
+                deadline: formData.deadline
+            },
+            context: {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem('token')}`
+                }
             }
         });
     };
@@ -54,6 +59,16 @@ const Goals = () => {
 
     const handleDelete = (id) => {
         if (window.confirm('Are you sure you want to delete this goal?')) {
+            const response = deleteGoal({
+                variables: {
+                    id: id
+                },
+                context: {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem('token')}`
+                    }
+                }
+            })
             setGoals(goals.filter(goal => goal.id !== id));
         }
     };
@@ -62,11 +77,16 @@ const Goals = () => {
         return `px-2 py-1 rounded-full text-xs font-medium border bg-blue-500/20 text-blue-400 border-blue-500/30 `;
     };
 
-    const { data: goalsData } = useQuery(GET_GOALS);
+    const { data: goalsData } = useQuery(GET_GOALS, {
+        context: {
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem('token')}`
+            }
+        }
+    });
 
-      useEffect(() => {
+    useEffect(() => {
         if (goalsData) {
-            console.log(goalsData);
             setGoals(goalsData.goals);
         }
     }, [goalsData]);

@@ -6,15 +6,13 @@ export const CREATE_GOAL = gql`
     $target_weight: Float!
     $progress: Float!
     $deadline: Date!
-    $user: ID!
   ) {
     createGoal(
       goal_type: $goal_type
       target_weight: $target_weight
       progress: $progress
       deadline: $deadline
-      user: $user
-    ) {
+      ) {
       id
       goal_type
       target_weight
@@ -62,12 +60,6 @@ export const DELETE_GOAL = gql`
       id: $id
     ) {
       id
-      goal_type
-      target_weight
-      progress
-      deadline
-      status
-      user
     }
   }
 `;

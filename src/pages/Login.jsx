@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
+import { USER_LOGIN } from '../queries/authQueries';
+import { useMutation } from '@apollo/client';
 
 // Login Component
-const Login = () => {
+const Login = ({setIsAuthenticated}) => {
   const [formData, setFormData] = useState({ email: '', password: '' });
   const [errors, setErrors] = useState({});
   const [showPassword, setShowPassword] = useState(false);
@@ -15,22 +17,37 @@ const Login = () => {
     }
   };
 
-  const handleSubmit = (e) => {
+  const [loginUser, { data, loading, error, reset }] = useMutation(USER_LOGIN);
+
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const newErrors = {};
     if (!formData.email.trim()) newErrors.email = 'Email is required';
     else if (!/\S+@\S+\.\S+/.test(formData.email)) newErrors.email = 'Email is invalid';
     if (!formData.password) newErrors.password = 'Password is required';
     else if (formData.password.length < 6) newErrors.password = 'Must be at least 6 characters';
-    
+
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
     } else {
-      alert(`Login successful! Welcome back, ${formData.email}`);
+      const response = await loginUser({
+        variables: {
+          email: formData.email,
+          password: formData.password
+        }
+      })
+      const data = response.data.loginUser
+      alert(data.message)
+      if (!data.success) return
+      localStorage.setItem('token', data.token)
+      setIsAuthenticated(true)
+      window.location.href = '/goals'
     }
   };
 
-   return (
+
+  return (
     <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-black flex items-center justify-center p-4">
       {/* Background decorative elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">

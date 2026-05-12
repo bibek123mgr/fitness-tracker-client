@@ -1,32 +1,94 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import Goals from './pages/Goals';
 import Nutrition from './pages/Nutrition';
 import Activities from './pages/Activities';
 import Header from './components/Header';
 
 function App() {
-  const [user, setUser] = useState(null);
+
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+
+    const token = localStorage.getItem("token");
+
+    if (token) {
+      setIsAuthenticated(true);
+    }
+
+  }, []);
+
   const handleLogout = () => {
-    setUser(null);
-    localStorage.removeItem('user');
+
+    localStorage.removeItem("token");
+
+    setIsAuthenticated(false);
+
   };
 
   return (
-    <BrowserRouter>
-      <Header user={user} onLogout={handleLogout} />
-      <Routes>
-        <Route path="/" element={<Login />} />
-        <Route path="/signup" element={<Signup />} />
-        <Route path="/goals" element={<Goals />} />
-        <Route path="/activities" element={<Activities />} />
-        <Route path="/nutritions" element={<Nutrition />} />
-      </Routes>
-    </BrowserRouter>
-  )
 
+    <BrowserRouter>
+
+      <Header onLogout={handleLogout} />
+
+      <Routes>
+
+        {/* Public Routes */}
+        <Route
+          path="/"
+          element={
+            isAuthenticated
+              ? <Navigate to="/goals" />
+              : <Login setIsAuthenticated={setIsAuthenticated} />
+          }
+        />
+
+        <Route
+          path="/signup"
+          element={
+            isAuthenticated
+              ? <Navigate to="/goals" />
+              : <Signup />
+          }
+        />
+
+        {/* Protected Routes */}
+        <Route
+          path="/goals"
+          element={
+            isAuthenticated
+              ? <Goals />
+              : <Navigate to="/" />
+          }
+        />
+
+        <Route
+          path="/activities"
+          element={
+            isAuthenticated
+              ? <Activities />
+              : <Navigate to="/" />
+          }
+        />
+
+        <Route
+          path="/nutritions"
+          element={
+            isAuthenticated
+              ? <Nutrition />
+              : <Navigate to="/" />
+          }
+        />
+
+      </Routes>
+
+    </BrowserRouter>
+
+  );
 }
 
-export default App
+export default App;
