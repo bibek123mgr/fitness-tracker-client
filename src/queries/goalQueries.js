@@ -31,7 +31,6 @@ export const UPDATE_GOAL = gql`
     $target_weight: Float!
     $progress: Float!
     $deadline: Date!
-    $status: String!
   ) {
     updateGoal(
       id: $id
@@ -39,7 +38,6 @@ export const UPDATE_GOAL = gql`
       target_weight: $target_weight
       progress: $progress
       deadline: $deadline
-      status: $status
     ) {
       id
       goal_type

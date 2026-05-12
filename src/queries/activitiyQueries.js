@@ -27,25 +27,24 @@ export const CREATE_ACTIVITY = gql`
 export const UPDATE_ACTIVITY = gql`
   mutation updateActivity(
     $id: ID!
-     $type: String!
+    $goal:ID!
+    $type: String!
     $duration: Float!
     $distance: Float!
-    $deadline: Date!
     $calories_burned:Float!
   ) {
     updateActivity(
       id: $id
+      goal:$goal
       type: $type
       duration: $duration
       distance: $distance
-      deadline: $deadline
       calories_burned:$calories_burned
     ) {
-     id
+      id
       type
       duration
       distance
-      deadline
       calories_burned
     }
   }
@@ -71,6 +70,7 @@ export const GET_ACTIVITYS = gql`
             duration
             distance
             calories_burned
+            goal
         }
     }
 `
