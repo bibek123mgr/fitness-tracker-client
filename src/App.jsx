@@ -10,6 +10,7 @@ import Header from './components/Header';
 function App() {
 
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [checkingAuth, setCheckingAuth] = useState(true);
 
   useEffect(() => {
 
@@ -18,6 +19,8 @@ function App() {
     if (token) {
       setIsAuthenticated(true);
     }
+
+    setCheckingAuth(false);
 
   }, []);
 
@@ -28,6 +31,15 @@ function App() {
     setIsAuthenticated(false);
 
   };
+
+  // Wait until auth check finishes
+  if (checkingAuth) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-black text-white">
+        Loading...
+      </div>
+    );
+  }
 
   return (
 
